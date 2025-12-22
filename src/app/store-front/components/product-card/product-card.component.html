@@ -1,0 +1,17 @@
+@let localProduct = product();
+<div class="card bg-base-100 shadow-sm hover-3d mx-2 h-full">
+  <figure>
+    <img
+      [src]="localProduct.images | productImage"
+      [alt]="localProduct.title" />
+  </figure>
+  <div class="card-body">
+    <a [routerLink]="['/product', localProduct.slug]" class="cursor-pointer">
+      <h2 class="card-title text-accent text-xl">{{ localProduct.title }}</h2>
+    </a>
+    <p>{{ localProduct.description | slice: 0:70 }}...</p>
+    <div class="card-actions justify-end">
+        <a [routerLink]="['/product', localProduct.slug]" class="btn btn-primary">Buy Now</a>
+    </div>
+  </div>
+</div>

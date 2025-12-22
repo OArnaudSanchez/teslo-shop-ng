@@ -1,0 +1,12 @@
+<section class="mx-3">
+    <h1 class="text-2xl font-bold">{{ header() }}</h1>
+
+    @if(subHeader()){
+        <h2 class="text-xl mb-5">{{ subHeader() }}</h2>
+    }
+
+    <div>
+        <!-- TODO: manage the loading component here and the resource -->
+        <ng-content></ng-content>
+    </div>
+</section>

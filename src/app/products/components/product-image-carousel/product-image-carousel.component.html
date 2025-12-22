@@ -1,0 +1,7 @@
+<swiper-container navigation="true" pagination="true">
+  @for (image of images(); track image;) {
+    <swiper-slide lazy="true">
+        <img [src]="image | productImage" loading="lazy" class="w-full object-cover rounded-md" alt="Product" />
+    </swiper-slide>
+  }
+</swiper-container>
