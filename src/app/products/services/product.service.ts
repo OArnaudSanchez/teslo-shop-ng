@@ -5,6 +5,7 @@ import { Product, ProductResponse } from '@products/interfaces/product.interface
 import { Observable, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ProductCacheService } from './product-cache.service';
+import { PRODUCT_ENDPOINTS } from '@products/endpoints/product.endpoints';
 
 const baseUrl = environment.API_URL;
 
@@ -26,7 +27,7 @@ export class ProductService {
     }
 
     return this.httpClient
-      .get<ProductResponse>(`${ baseUrl }/products`, {
+      .get<ProductResponse>(`${ baseUrl }/${PRODUCT_ENDPOINTS.products}`, {
         params: {
           limit,
           offset,
@@ -45,7 +46,7 @@ export class ProductService {
 
     return this
       .httpClient
-      .get<Product>(`${ baseUrl }/products/${ productSlug }`)
+      .get<Product>(`${ baseUrl }/${PRODUCT_ENDPOINTS.products}/${ productSlug }`)
       .pipe(
         tap(product =>  this.productCacheService.setProductCache(productSlug, product))
       );

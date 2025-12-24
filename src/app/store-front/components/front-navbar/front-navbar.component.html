@@ -47,7 +47,14 @@
         </li>
     </ul>
   </div>
-  <div class="navbar-end">
-    <a class="btn btn-accent">Salir ?? Cart</a>
+  <div class="navbar-end gap-4">
+    @if(authStatus() === 'AUTHENTICATED'){
+      <h3>{{ authenticatedUser()?.fullName }}</h3>
+      <button class="btn btn-error" (click)="onLogout()">Cerrar Sesión</button>
+    }
+
+    @if(authStatus() === 'NOT-AUTHENTICATED'){
+      <a routerLink="/auth/login" class="btn btn-primary">Iniciar Sesión</a>
+    }
   </div>
 </div>

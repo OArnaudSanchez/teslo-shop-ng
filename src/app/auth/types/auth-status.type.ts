@@ -1,0 +1,2 @@
+
+export type AuthStatus = 'CHECKING' | 'AUTHENTICATED' | 'NOT-AUTHENTICATED';
