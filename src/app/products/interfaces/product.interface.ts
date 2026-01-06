@@ -1,5 +1,7 @@
 import { User } from "@auth/interfaces/user.interface";
 
+
+
 export interface ProductResponse {
   count: number;
   pages: number;
@@ -35,3 +37,19 @@ export enum Size {
   XL = 'XL',
   XXL = 'XXL',
 }
+
+export const DEFAULT_EMPTY_PRODUCT_ID = 'new';
+
+export const emptyProduct: Product = {
+  id: DEFAULT_EMPTY_PRODUCT_ID,
+  description: '',
+  gender: Gender.Men,
+  images: [''],
+  price: 0,
+  sizes: [],
+  slug: '',
+  stock: 0,
+  tags: [],
+  title: '',
+  user: {} as User,
+};

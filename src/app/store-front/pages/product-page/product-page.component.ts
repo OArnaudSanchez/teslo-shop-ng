@@ -26,7 +26,7 @@ export class ProductPageComponent {
 
     stream: ({ params }) => {
       const { idSlug } = params;
-      return this.productService.getProductByIdSlug(idSlug);
+      return this.productService.getProductBySlug(idSlug);
     },
   });
 }

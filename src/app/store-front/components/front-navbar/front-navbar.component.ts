@@ -13,6 +13,7 @@ export class FrontNavbarComponent {
   private readonly authService = inject(AuthService);
   authenticatedUser = this.authService.user;
   authStatus = this.authService.authStatus;
+  isAdmin = this.authService.isAdminUser;
 
   onLogout(){
     if(!confirm("Seguro que desea salir?")) return;

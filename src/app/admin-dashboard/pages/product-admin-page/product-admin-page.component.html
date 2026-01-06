@@ -1,0 +1,7 @@
+@if(productResource.isLoading()){
+    <app-loading />
+}
+
+@if(productResource.hasValue()){
+    <product-details [product]="productResource.value()" />
+}

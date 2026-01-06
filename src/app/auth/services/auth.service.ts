@@ -12,6 +12,7 @@ import { catchError, map, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 const LOCAL_STORAGE_KEY = environment.LOCAL_STORAGE_KEY;
+const ADMIN_ROLE = environment.ADMIN_ROLE;
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +31,13 @@ export class AuthService {
     if (this._authStatus() === 'CHECKING') return 'CHECKING';
     return this._user() ? 'AUTHENTICATED' : 'NOT-AUTHENTICATED';
   });
+
   readonly user = computed<User | null>(() => this._user());
+
+  readonly isAdminUser = computed(() => {
+    return this._user()?.roles.includes(ADMIN_ROLE) ?? false;
+  });
+
   readonly token = computed<string | null>(() => this._token());
 
   checkStatusResource = rxResource({
@@ -38,18 +45,20 @@ export class AuthService {
   });
 
   login(payload: Login): Observable<boolean> {
-    return this.httpClient.post<AuthResponse>(`${this.baseUrl}/${AUTH_ENDPOINTS.login}`, payload).pipe(
-      map((response) => this.handleAuthSuccess(response, 'AUTHENTICATED')),
-      catchError((error) => this.handleAuthError(error))
-    );
+    return this.httpClient
+      .post<AuthResponse>(`${this.baseUrl}/${AUTH_ENDPOINTS.login}`, payload)
+      .pipe(
+        map((response) => this.handleAuthSuccess(response, 'AUTHENTICATED')),
+        catchError((error) => this.handleAuthError(error))
+      );
   }
 
   register(payload: Register): Observable<boolean> {
     return this.httpClient
       .post<AuthResponse>(`${this.baseUrl}/${AUTH_ENDPOINTS.register}`, payload)
       .pipe(
-        map(response => this.handleAuthSuccess(response, 'AUTHENTICATED')),
-        catchError(error => this.handleAuthError(error))
+        map((response) => this.handleAuthSuccess(response, 'AUTHENTICATED')),
+        catchError((error) => this.handleAuthError(error))
       );
   }
 
@@ -59,6 +68,8 @@ export class AuthService {
       this.logout();
       return of(false);
     }
+
+    // TODO: Implement cache
 
     return this.httpClient.get<AuthResponse>(`${this.baseUrl}/${AUTH_ENDPOINTS.checkStatus}`).pipe(
       map((response) => this.handleAuthSuccess(response, 'AUTHENTICATED')),

@@ -50,6 +50,11 @@
   <div class="navbar-end gap-4">
     @if(authStatus() === 'AUTHENTICATED'){
       <h3>{{ authenticatedUser()?.fullName }}</h3>
+      
+      @if(isAdmin()){
+        <a routerLink="/admin" class="btn btn-primary">Dashboard</a>
+      }
+
       <button class="btn btn-error" (click)="onLogout()">Cerrar Sesión</button>
     }
 
