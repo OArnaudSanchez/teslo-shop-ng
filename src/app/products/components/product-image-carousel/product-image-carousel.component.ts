@@ -7,13 +7,12 @@ import { ProductImagePipe } from '@shared/pipes/product-image.pipe';
   imports: [ProductImagePipe],
   templateUrl: './product-image-carousel.component.html',
   styleUrl: './product-image-carousel.component.css',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class ProductImageCarouselComponent implements AfterViewInit{
+export class ProductImageCarouselComponent implements AfterViewInit {
   images = input.required<string[]>();
 
   ngAfterViewInit(): void {
     register();
   }
-  
 }

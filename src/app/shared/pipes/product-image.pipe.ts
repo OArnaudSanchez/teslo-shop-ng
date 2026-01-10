@@ -8,6 +8,9 @@ import { environment } from 'src/environments/environment';
 
 export class ProductImagePipe implements PipeTransform {
     transform(value: string | string[]): string {
+
+        if(typeof value === 'string' && value.startsWith('blob:')) return value;
+
         return !value || value?.length === 0 
             ? './assets/images/no-image.jpg' 
             : this.getFullUrl(value);

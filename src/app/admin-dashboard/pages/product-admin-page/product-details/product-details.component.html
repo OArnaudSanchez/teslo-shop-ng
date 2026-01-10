@@ -40,26 +40,26 @@
     <h2 class="text-lg font-bold">Datos de venta</h2>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <div>
-            <input
-              type="number"
-              placeholder="Precio"
-              class="input input-bordered w-full"
-              formControlName="price"
-              [class.border-red-500]="inputHasErrors('price')"
-            />
-            <form-error-label [control]="productForm.controls.price" />
-        </div>
-        <div>
-            <input
-              type="number"
-              placeholder="Inventario"
-              class="input input-bordered w-full"
-              formControlName="stock"
-              [class.border-red-500]="inputHasErrors('stock')"
-            />
-            <form-error-label [control]="productForm.controls.stock" />
-        </div>
+      <div>
+        <input
+          type="number"
+          placeholder="Precio"
+          class="input input-bordered w-full"
+          formControlName="price"
+          [class.border-red-500]="inputHasErrors('price')"
+        />
+        <form-error-label [control]="productForm.controls.price" />
+      </div>
+      <div>
+        <input
+          type="number"
+          placeholder="Inventario"
+          class="input input-bordered w-full"
+          formControlName="stock"
+          [class.border-red-500]="inputHasErrors('stock')"
+        />
+        <form-error-label [control]="productForm.controls.stock" />
+      </div>
     </div>
 
     <input
@@ -128,14 +128,31 @@
 
   <div class="flex flex-col gap-2">
     <div class="flex justify-end h-12">
-      <button class="btn btn-secondary" type="submit">
-        Guardar
-      </button>
+      <button class="btn btn-secondary" type="submit">Guardar</button>
     </div>
 
-    <product-image-carousel [images]="localProduct.images" />
+    <product-image-carousel [images]="carousellImages()" />
 
-    <input type="file" formGroupName="images" class="file-input file-input-bordered w-full mt-4" />
+    <input
+      type="file"
+      multiple
+      accept="image/*"
+      class="file-input file-input-bordered w-full mt-4"
+      (change)="onFilesChanged($event)"
+    />
+
+    <section class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      @for (image of tempImageFiles(); track image) {
+        <button type="button" (click)="onDeleteTemporalImage(image.name)">
+          <img
+          [src]="image.url| productImage"
+          class="w-full object-cover rounded-xl"
+          alt="Temporal Images"
+          />
+          <span class="btn btn-error cursor-pointer mt-1 w-1 h-3">X</span>
+        </button>
+      }
+    </section>
   </div>
 </form>
 

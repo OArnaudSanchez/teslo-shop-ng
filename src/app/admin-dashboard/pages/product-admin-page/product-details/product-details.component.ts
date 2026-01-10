@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { DEFAULT_EMPTY_PRODUCT_ID, Product } from '@products/interfaces/product.interface';
 import { ProductImageCarouselComponent } from '@products/components/product-image-carousel/product-image-carousel.component';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -7,6 +7,8 @@ import { FormErrorLabelComponent } from '@shared/components/form-error-label/for
 import { ProductService } from '@products/services/product.service';
 import { Router } from '@angular/router';
 import { AlertComponent } from '@shared/components/alert/alert.component';
+import { ProductImagePipe } from '@shared/pipes/product-image.pipe';
+import { ImageFile } from '@dashboard/interfaces/image-file';
 
 @Component({
   selector: 'product-details',
@@ -15,6 +17,7 @@ import { AlertComponent } from '@shared/components/alert/alert.component';
     ReactiveFormsModule,
     FormErrorLabelComponent,
     AlertComponent,
+    ProductImagePipe,
   ],
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.css',
@@ -28,6 +31,11 @@ export class ProductDetailsComponent implements OnInit {
   sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
   alertMessage = signal<string>('');
   canShowAlertMessage = signal(false);
+  tempImageFiles = signal<ImageFile[]>([]);
+  imageFileList: FileList | undefined = undefined;
+  carousellImages = computed(() => {
+    return [...this.product().images, ...this.tempImageFiles().map((image) => image.url)];
+  });
 
   ngOnInit() {
     this.setFormValue(this.product());
@@ -35,8 +43,6 @@ export class ProductDetailsComponent implements OnInit {
 
   setFormValue(formLike: Partial<Product>) {
     this.productForm.reset(this.product() as any);
-    // this.productForm.patchValue(formLike as any);
-    // this.productForm.patchValue({ tags: formLike.tags?.join(',') });
   }
 
   readonly productForm = this.formBuilder.group({
@@ -51,19 +57,18 @@ export class ProductDetailsComponent implements OnInit {
     gender: ['men', [Validators.required, Validators.pattern(/men|women|kid|unisex/)]],
   });
 
-  onSubmit() {
+  async onSubmit() {
     this.productForm.markAllAsTouched();
     if (this.productForm.invalid) return;
 
     const formValue = this.productForm.value;
-
     const productLike: Partial<Product> = {
       ...(formValue as any),
       tags: this.getProductTags(formValue.tags ?? []),
     };
-
+    
     if (this.product().id === DEFAULT_EMPTY_PRODUCT_ID) {
-      this.productService.createProduct(productLike).subscribe({
+      this.productService.createProduct(productLike, this.imageFileList).subscribe({
         next: (product) => {
           console.log('CREATED', product);
           this.router.navigate(['/admin/product', product.id]);
@@ -73,7 +78,7 @@ export class ProductDetailsComponent implements OnInit {
       return;
     }
 
-    this.productService.updateProduct(this.product().id, productLike).subscribe({
+    this.productService.updateProduct(this.product().id, productLike, this.imageFileList).subscribe({
       next: (product) => {
         this.showAlertMessage('Producto actualizado correctamente.');
       },
@@ -105,6 +110,25 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   inputHasErrors = (input: string) => this.productForm.get(input)?.errors ?? false;
+
+  onFilesChanged(event: Event) {
+    const fileList = (event.target as HTMLInputElement).files;
+    this.imageFileList = fileList ?? undefined;
+
+    const imagesFiles: ImageFile[] = Array.from(fileList ?? []).map((file) => ({
+      url: URL.createObjectURL(file),
+      name: file.name,
+    }));
+
+    this.tempImageFiles.update(prevImages => [...prevImages, ...imagesFiles]);
+  }
+
+  onDeleteTemporalImage(imageName: string) {
+    this.tempImageFiles.update((prev) => prev.filter((file) => file.name !== imageName));
+    
+    // TODO: delete image from carousell
+    this.imageFileList = undefined;
+  }
 
   private showAlertMessage(message: string) {
     this.alertMessage.set(message);

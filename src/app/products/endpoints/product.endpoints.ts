@@ -1,4 +1,5 @@
 
 export const PRODUCT_ENDPOINTS = {
-    products: 'products'
+    products: 'products',
+    product: 'product',
 } as const;

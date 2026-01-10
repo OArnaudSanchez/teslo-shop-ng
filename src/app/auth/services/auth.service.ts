@@ -23,6 +23,7 @@ export class AuthService {
 
   private readonly baseUrl = environment.API_URL;
 
+  // TODO: Use an object state
   private _authStatus = signal<AuthStatus>('CHECKING');
   private _user = signal<User | null>(null);
   private _token = signal<string | null>(this.localStorageService.getItem(LOCAL_STORAGE_KEY));
